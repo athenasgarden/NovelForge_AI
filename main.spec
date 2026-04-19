@@ -23,7 +23,7 @@ hiddenimports = ['typing_extensions',
 tmp_ret = collect_all('chromadb')
 datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
 
-customtkinter_dir = r'c:/Users/xieli/Desktop/AI_NovelGenerator/.venv/Lib/site-packages/customtkinter'
+customtkinter_dir = r'c:/Users/xieli/Desktop/NovelForge_AI/.venv/Lib/site-packages/customtkinter'
 datas.append((customtkinter_dir, 'customtkinter'))
 
 a = Analysis(
@@ -47,7 +47,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='AI_NovelGenerator_V1.4.4',
+    name='NovelForge_AI_V1.4.4',
     debug=True,
     bootloader_ignore_signals=False,
     strip=False,
@@ -68,5 +68,5 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='AI_NovelGenerator_V1.4.4'
+    name='NovelForge_AI_V1.4.4'
 )
