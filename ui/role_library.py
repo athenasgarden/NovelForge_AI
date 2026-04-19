@@ -230,12 +230,12 @@ class RoleLibrary:
         current_role = None
         current_attr = None
         
-        attribute_pattern = re.compile(r'^([├└]──)([^：:]+)\s*[:：]')
+        attribute_pattern = re.compile(r'^([├└]──)([^::]+)\s*[::]')
         item_pattern = re.compile(r'^│\s+([├└]──)\s*(.*)')
         
         for line in response.split('\n'):
             line = line.strip()
-            role_match = re.match(r'^([^：:]+)\s*[:：]\s*$', line)
+            role_match = re.match(r'^([^::]+)\s*[::]\s*$', line)
             if role_match:
                 current_role = role_match.group(1).strip()
                 roles.append({'name': current_role, 'attributes': {}})
@@ -420,7 +420,7 @@ class RoleLibrary:
             new_p = os.path.join(self.save_path, cat, f"{new_name}.txt")
 
             with open(old_p, 'r', encoding='utf-8') as f: txt = f.read()
-            txt = txt.replace(f"{old_name}:", f"{new_name}:", 1).replace(f"{old_name}：", f"{new_name}：", 1)
+            txt = txt.replace(f"{old_name}:", f"{new_name}:", 1).replace(f"{old_name}:", f"{new_name}:", 1)
             with open(new_p, 'w', encoding='utf-8') as f: f.write(txt)
             os.remove(old_p)
 

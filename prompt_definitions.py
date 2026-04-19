@@ -3,14 +3,10 @@
 import os
 import json
 
-def load_prompts(lang='en_US'):
-    """Loads prompts from a JSON file based on the specified language."""
+def load_prompts():
+    """Loads prompts from the English JSON file."""
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    prompt_file = os.path.join(base_dir, 'prompts', f'{lang}.json')
-
-    if not os.path.exists(prompt_file):
-        # Fallback to English if the requested language is missing
-        prompt_file = os.path.join(base_dir, 'prompts', 'en_US.json')
+    prompt_file = os.path.join(base_dir, 'prompts', 'en_US.json')
 
     try:
         with open(prompt_file, 'r', encoding='utf-8') as f:
@@ -19,8 +15,8 @@ def load_prompts(lang='en_US'):
         print(f"Error loading prompts: {e}")
         return {}
 
-# Load English prompts by default
-_prompts = load_prompts('en_US')
+# Load English prompts
+_prompts = load_prompts()
 
 # Map dictionary keys to global variables for compatibility with existing code
 summarize_recent_chapters_prompt = _prompts.get('summarize_recent_chapters_prompt', '')

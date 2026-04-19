@@ -95,7 +95,7 @@ def summarize_recent_chapters(
             chapter_purpose=chapter_info.get("chapter_purpose", "Content Progression"),
             suspense_level=chapter_info.get("suspense_level", "Medium"),
             foreshadowing=chapter_info.get("foreshadowing", "None"),
-            plot_twist_level=chapter_info.get("plot_twist_level", "★☆☆☆☆"),
+            plot_twist_level=chapter_info.get("plot_twist_level", "1/5"),
             chapter_summary=chapter_info.get("chapter_summary", ""),
             next_chapter_number=novel_number + 1,
             next_chapter_title=next_chapter_info.get("chapter_title", "Untitled"),
@@ -104,7 +104,7 @@ def summarize_recent_chapters(
             next_chapter_summary=next_chapter_info.get("chapter_summary", "Transition content"),
             next_chapter_suspense_level=next_chapter_info.get("suspense_level", "Medium"),
             next_chapter_foreshadowing=next_chapter_info.get("foreshadowing", "No specific foreshadowing"),
-            next_chapter_plot_twist_level=next_chapter_info.get("plot_twist_level", "★☆☆☆☆")
+            next_chapter_plot_twist_level=next_chapter_info.get("plot_twist_level", "1/5")
         )
         
         response_text = invoke_with_cleaning(llm_adapter, prompt)
@@ -125,15 +125,11 @@ def extract_summary_from_response(response_text: str) -> str:
     if not response_text:
         return ""
         
-    # Look for summary markers (both English and Chinese)
+    # Look for summary markers
     summary_markers = [
         "Current Chapter Summary:",
         "Chapter Summary:",
-        "Summary:",
-        "当前章节摘要:", 
-        "章节摘要:",
-        "摘要:",
-        "本章摘要:"
+        "Summary:"
     ]
     
     for marker in summary_markers:
@@ -169,24 +165,24 @@ Chapter Summary: {summary}
         location=chapter_info.get('scene_location', 'Not specified'),
         foreshadow=chapter_info.get('foreshadowing', 'None'),
         suspense=chapter_info.get('suspense_level', 'Medium'),
-        twist=chapter_info.get('plot_twist_level', '★☆☆☆☆'),
+        twist=chapter_info.get('plot_twist_level', '1/5'),
         summary=chapter_info.get('chapter_summary', 'Not provided')
     )
 
 def parse_search_keywords(response_text: str) -> list:
-    """Parses the new keyword format (e.g., 'Tech Company·Data Leak')."""
+    """Parses the search keyword format."""
     return [
-        line.strip().replace('·', ' ')
+        line.strip()
         for line in response_text.strip().split('\n')
-        if '·' in line
+        if line.strip()
     ][:5]
 
 def apply_content_rules(texts: list, novel_number: int) -> list:
     """Applies content processing rules to retrieved texts."""
     processed = []
     for text in texts:
-        # Detect chapter references in both English and Chinese
-        match = re.search(r'(?:第\s*(\d+)\s*章|Chapter\s*(\d+))', text, re.IGNORECASE)
+        # Detect chapter references
+        match = re.search(r'Chapter\s*(\d+)', text, re.IGNORECASE)
         if match or re.search(r'chapter_[\d]+', text):
             chap_nums = list(map(int, re.findall(r'\d+', text)))
             recent_chap = max(chap_nums) if chap_nums else 0
@@ -195,7 +191,7 @@ def apply_content_rules(texts: list, novel_number: int) -> list:
             if time_distance <= 2:
                 processed.append(f"[SKIP] Skipping recent chapter content: {text[:120]}...")
             elif 3 <= time_distance <= 5:
-                processed.append(f"[MOD40%] {text} (Requires ≥40% modification)")
+                processed.append(f"[MOD40%] {text} (Requires >= 40% modification)")
             else:
                 processed.append(f"[OK] {text} (Core can be referenced)")
         else:
@@ -207,7 +203,7 @@ def apply_knowledge_rules(contexts: list, chapter_num: int) -> list:
     processed = []
     for text in contexts:
         # Detect historical chapter content
-        if ("第" in text and "章" in text) or ("Chapter" in text):
+        if "Chapter" in text:
             chap_nums = [int(s) for s in re.findall(r'\d+', text)]
             recent_chap = max(chap_nums) if chap_nums else 0
             time_distance = chapter_num - recent_chap
@@ -331,7 +327,7 @@ def build_chapter_prompt(
     next_chapter_purpose = next_chapter_info.get("chapter_purpose", "Connecting Plot")
     next_chapter_suspense = next_chapter_info.get("suspense_level", "Medium")
     next_chapter_foreshadow = next_chapter_info.get("foreshadowing", "No specific foreshadowing")
-    next_chapter_twist = next_chapter_info.get("plot_twist_level", "★☆☆☆☆")
+    next_chapter_twist = next_chapter_info.get("plot_twist_level", "1/5")
     next_chapter_summary = next_chapter_info.get("chapter_summary", "Transition content")
 
     # Create chapters directory
@@ -405,7 +401,7 @@ def build_chapter_prompt(
             chapter_title=chapter_title,
             characters_involved=characters_involved,
             key_items=key_items,
-            scene_location=scene_location,
+            scene_location=scene_loc,
             chapter_role=chapter_role,
             chapter_purpose=chapter_purpose,
             foreshadowing=foreshadowing,
@@ -415,7 +411,7 @@ def build_chapter_prompt(
         )
         
         search_response = invoke_with_cleaning(llm_adapter, search_prompt)
-        keyword_groups = parse_search_keywords(search_response)
+        keyword_groups = search_response.strip().split('\n')[:5]
 
         all_contexts = []
         from embedding_adapters import create_embedding_adapter

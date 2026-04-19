@@ -41,7 +41,7 @@ def limit_chapter_blueprint(blueprint_text: str, limit_chapters: int = 100) -> s
     Takes only the most recent limit_chapters from the existing directory to avoid excessively long prompts.
     Supports both Chinese and English chapter patterns.
     """
-    pattern = r"((?:第\s*\d+\s*章|Chapter\s*\d+).*?)(?=(?:第\s*\d+\s*章|Chapter\s*\d+)|$)"
+    pattern = r"((?:Chapter \s*\d+\s*|Chapter\s*\d+).*?)(?=(?:Chapter \s*\d+\s*|Chapter\s*\d+)|$)"
     chapters = re.findall(pattern, blueprint_text, flags=re.DOTALL | re.IGNORECASE)
     if not chapters:
         return blueprint_text
@@ -100,7 +100,7 @@ def Chapter_blueprint_generate(
 
     if existing_blueprint:
         logging.info("Detected existing blueprint content. Will resume chunked generation from that point.")
-        pattern = r"(?:第\s*(\d+)\s*章|Chapter\s*(\d+))"
+        pattern = r"(?:Chapter \s*(\d+)\s*|Chapter\s*(\d+))"
         existing_chapter_numbers = []
         for match in re.finditer(pattern, existing_blueprint, re.IGNORECASE):
             num = match.group(1) if match.group(1) else match.group(2)

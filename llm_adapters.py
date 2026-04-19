@@ -203,7 +203,7 @@ def create_llm_adapter(
     fmt = interface_format.strip().lower()
 
     # OpenAI compatible interface list
-    openai_compatible = ["openai", "deepseek", "ollama", "ollama cloud", "ml studio", "阿里云百炼", "火山引擎", "硅基流动", "grok"]
+    openai_compatible = ["openai", "deepseek", "ollama", "ollama cloud", "ml studio", "aliyun", "volcengine", "siliconflow", "grok"]
 
     if fmt in openai_compatible:
         actual_api_key = api_key if api_key or (fmt != "ollama" and fmt != "ollama cloud") else "ollama"

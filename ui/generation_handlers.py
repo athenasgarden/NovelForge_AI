@@ -65,7 +65,7 @@ def generate_novel_architecture_ui(self):
                 timeout=timeout_val,
                 user_guidance=user_guidance
             )
-            self.safe_log("✅ Novel architecture generation complete. Check 'Novel Settings' tab.")
+            self.safe_log("Novel architecture generation complete. Check 'Novel Settings' tab.")
         except Exception:
             self.handle_exception("Error generating novel architecture")
         finally:
@@ -110,7 +110,7 @@ def generate_chapter_blueprint_ui(self):
                 timeout=timeout_val,
                 user_guidance=user_guidance
             )
-            self.safe_log("✅ Chapter blueprint generation complete. Check 'Chapter Blueprint' tab.")
+            self.safe_log("Chapter blueprint generation complete. Check 'Chapter Blueprint' tab.")
         except Exception:
             self.handle_exception("Error generating chapter blueprint")
         finally:
@@ -207,9 +207,10 @@ def generate_chapter_draft_ui(self):
                 if role_contents:
                     role_content_str = "\n".join(role_contents)
                     placeholder_variations = [
-                        "Major Characters: {characters_involved}",
-                        "核心人物(可能未指定)：{characters_involved}",
-                        "核心人物：{characters_involved}"
+                        "- Major Characters: {characters_involved}",
+                        "├── Characters: {characters_involved}",
+                        "- Major Characters (if any): {characters_involved}",
+                        "Major Characters: {characters_involved}"
                     ]
                     
                     for placeholder in placeholder_variations:
@@ -249,7 +250,7 @@ def generate_chapter_draft_ui(self):
             event.wait()
             edited_prompt = result["prompt"]
             if edited_prompt is None:
-                self.safe_log("❌ User cancelled draft generation.")
+                self.safe_log("User cancelled draft generation.")
                 return
 
             self.safe_log("Generating chapter draft...")
@@ -277,10 +278,10 @@ def generate_chapter_draft_ui(self):
                 custom_prompt_text=edited_prompt
             )
             if draft_text:
-                self.safe_log(f"✅ Chapter {chap_num} draft generated.")
+                self.safe_log(f"Chapter {chap_num} draft generated.")
                 self.master.after(0, lambda: self.show_chapter_in_textbox(draft_text))
             else:
-                self.safe_log("⚠️ Draft generation failed or empty.")
+                self.safe_log("Draft generation failed or empty.")
         except Exception:
             self.handle_exception("Error generating chapter draft")
         finally:
@@ -362,7 +363,7 @@ def finalize_chapter_ui(self):
                 max_tokens=max_tokens,
                 timeout=timeout_val
             )
-            self.safe_log(f"✅ Chapter {chap_num} finalized (Summary, Character State, and Vector Store updated).")
+            self.safe_log(f"Chapter {chap_num} finalized (Summary, Character State, and Vector Store updated).")
 
             final_text = read_file(chapter_file)
             self.master.after(0, lambda: self.show_chapter_in_textbox(final_text))
@@ -395,7 +396,7 @@ def do_consistency_check(self):
             chapter_text = read_file(chap_file)
 
             if not chapter_text.strip():
-                self.safe_log("⚠️ Chapter file is empty or missing, cannot check consistency.")
+                self.safe_log("Chapter file is empty or missing, cannot check consistency.")
                 return
 
             self.safe_log("Starting consistency check...")
@@ -540,7 +541,12 @@ def generate_batch_ui(self):
                             self.safe_log(f"Failed to read character file {file}: {str(e)}")
         if role_contents:
             role_content_str = "\n".join(role_contents)
-            placeholder_variations = ["Major Characters: {characters_involved}", "核心人物(可能未指定)：{characters_involved}", "核心人物：{characters_involved}"]
+            placeholder_variations = [
+                "- Major Characters: {characters_involved}",
+                "├── Characters: {characters_involved}",
+                "- Major Characters (if any): {characters_involved}",
+                "Major Characters: {characters_involved}",
+            ]
             for placeholder in placeholder_variations:
                 if placeholder in final_prompt:
                     final_prompt = final_prompt.replace(placeholder, f"Major Characters:\n{role_content_str}")
@@ -633,7 +639,7 @@ def import_knowledge_handler(self):
                         file_path=temp_path,
                         filepath=self.filepath_var.get().strip()
                     )
-                    self.safe_log("✅ Knowledge base file imported.")
+                    self.safe_log("Knowledge base file imported.")
                 finally:
                     try: os.unlink(temp_path)
                     except: pass
