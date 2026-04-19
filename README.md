@@ -1,12 +1,8 @@
-# 📖 Automatic Novel Generation Tool
+# 📖 NovelForge: Intelligent Novel Generation Tool
 
 [中文文档](./README_zh-CN.md) | English
 
-> ~~Currently I don't have much energy to maintain this project. The project brings no revenue, and with graduation approaching I have many other priorities. If time permits in the future I may consider a refactor using newer technologies. — 2025/09/24~~
->
->- ~~**(2026/03/09):** This project will be refactored soon, featuring modern implementations and fresh creative concepts.~~
->
-> **Update (2026/03/25):** The refactored version has completed initial development (only the main framework is done, features are not yet available) and will be uploaded to the dev branch within a week. Subsequent development will also be synchronized on the branch.
+> **NovelForge** is a modernized and enhanced fork of the original AI Novel Generator. It aims to provide a more robust, maintainable, and feature-rich environment for AI-assisted creative writing.
 
 <div align="center">
   
@@ -50,20 +46,15 @@ Ensure the environment meets the following requirements:
 
 ## 📥 Installation
 1. **Download the project**  
-    - Download the project ZIP from [GitHub](https://github.com) or clone the repository:
+    - Clone the repository:
        ```bash
-       git clone https://github.com/YILING0013/AI_NovelGenerator
+       git clone https://github.com/your-repo/NovelForge
        ```
 
-
-2. **Install build tools (optional)**  
-    - If some packages fail to install, visit [Visual Studio Build Tools](https://visualstudio.microsoft.com/zh-hans/visual-cpp-build-tools/) to download and install C++ build tools required by some modules.
-    - By default the installer includes MSBuild only; make sure to select **C++ Desktop Development** from the workload list.
-
-3. **Install dependencies and run**  
+2. **Install dependencies and run**
     - Open a terminal and change to the project directory:
        ```bash
-       cd AI_NovelGenerator
+       cd NovelForge
        ```
     - Install project dependencies:
        ```bash
