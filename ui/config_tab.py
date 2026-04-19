@@ -266,7 +266,7 @@ def build_ai_config_tab(self):
     base_url_entry.grid(row=row_start+1, column=1, columnspan=2, padx=5, pady=5, sticky="nsew")
     
     create_label_with_help(self, self.ai_config_tab, "Format:", "interface_format", row_start+2, 0)
-    interface_options = ["OpenAI", "Azure OpenAI", "Ollama", "DeepSeek", "Gemini", "ML Studio", "SiliconFlow", "Grok"]
+    interface_options = ["OpenAI", "Azure OpenAI", "Ollama", "Ollama Cloud", "DeepSeek", "Gemini", "ML Studio", "SiliconFlow", "Grok"]
     interface_dropdown = ctk.CTkOptionMenu(self.ai_config_tab, values=interface_options, variable=self.interface_format_var, font=("Arial", 12))
     interface_dropdown.grid(row=row_start+2, column=1, columnspan=2, padx=5, pady=5, sticky="nsew")
     

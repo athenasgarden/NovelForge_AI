@@ -203,10 +203,10 @@ def create_llm_adapter(
     fmt = interface_format.strip().lower()
 
     # OpenAI compatible interface list
-    openai_compatible = ["openai", "deepseek", "ollama", "ml studio", "阿里云百炼", "火山引擎", "硅基流动", "grok"]
+    openai_compatible = ["openai", "deepseek", "ollama", "ollama cloud", "ml studio", "阿里云百炼", "火山引擎", "硅基流动", "grok"]
 
     if fmt in openai_compatible:
-        actual_api_key = api_key if api_key or fmt != "ollama" else "ollama"
+        actual_api_key = api_key if api_key or (fmt != "ollama" and fmt != "ollama cloud") else "ollama"
         return GenericOpenAIAdapter(actual_api_key, base_url, model_name, max_tokens, temperature, timeout, interface_format)
     elif fmt == "azure openai":
         return AzureOpenAIAdapter(api_key, base_url, model_name, max_tokens, temperature, timeout)

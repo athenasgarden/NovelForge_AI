@@ -198,9 +198,10 @@ After packaging an executable (e.g., `main.exe` on Windows) will appear in the `
 
 7. **Repeat steps 4–6** until all chapters are generated and finalized.
 
-> Vector retrieval tips:
+> Vector retrieval and Cloud LLM tips:
 > 1. Explicitly set the embedding interface and model name.
-> 2. For local Ollama embeddings start the Ollama service first:
+> 2. **Ollama Cloud**: To use Ollama's cloud hosting, set the interface format to **Ollama Cloud**, use the base URL `https://ollama.com/v1`, and provide your Ollama API key.
+> 3. For local Ollama LLM or embeddings, start the Ollama service first:
 >    ```bash
 >    ollama serve  # Start the service
 >    ollama pull nomic-embed-text  # Download/enable the model
