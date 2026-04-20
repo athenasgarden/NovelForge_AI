@@ -39,8 +39,11 @@ def parse_chapter_blueprint(blueprint_text: str):
         if not header_match:
             continue
 
-        chapter_number = int(header_match.group(1))
-        chapter_title  = header_match.group(2).strip()
+        if header_match.group(1):
+            chapter_number = int(header_match.group(1))
+        else:
+            chapter_number = int(header_match.group(2))
+        chapter_title  = header_match.group(3).strip()
 
         for line in lines[1:]:
             line_stripped = line.strip()

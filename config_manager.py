@@ -21,7 +21,7 @@ def load_config(config_file: str) -> dict:
 
 
 def create_config(config_file: str) -> dict:
-    """Create a default configuration file and return the config dictionary."""
+    """Create a default configuration file."""
     config = {
         "last_interface_format": "OpenAI",
         "last_embedding_interface_format": "OpenAI",

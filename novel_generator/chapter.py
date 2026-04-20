@@ -309,7 +309,7 @@ def build_chapter_prompt(
     character_state_file = os.path.join(filepath, "character_state.txt")
     character_state_text = read_file(character_state_file)
     
-    # Get chapter info from blueprint
+    # Get chapter info
     chapter_info = get_chapter_info_from_blueprint(blueprint_text, novel_number)
     chapter_title = chapter_info["chapter_title"]
     chapter_role = chapter_info["chapter_role"]
@@ -318,11 +318,6 @@ def build_chapter_prompt(
     foreshadowing = chapter_info["foreshadowing"]
     plot_twist_level = chapter_info["plot_twist_level"]
     chapter_summary = chapter_info["chapter_summary"]
-
-    # Use arguments if provided by user in UI, otherwise fallback to chapter_info (which usually doesn't have them)
-    effective_characters = characters_involved if characters_involved else chapter_info.get("characters_involved", "Not specified")
-    effective_items = key_items if key_items else chapter_info.get("key_items", "Not specified")
-    effective_scene = scene_location if scene_location else chapter_info.get("scene_location", "Not specified")
 
     # Get next chapter info
     next_chapter_number = novel_number + 1
@@ -404,9 +399,9 @@ def build_chapter_prompt(
         search_prompt = knowledge_search_prompt.format(
             chapter_number=novel_number,
             chapter_title=chapter_title,
-            characters_involved=effective_characters,
-            key_items=effective_items,
-            scene_location=effective_scene,
+            characters_involved=characters_involved,
+            key_items=key_items,
+            scene_location=scene_loc,
             chapter_role=chapter_role,
             chapter_purpose=chapter_purpose,
             foreshadowing=foreshadowing,
@@ -454,9 +449,9 @@ def build_chapter_prompt(
             "chapter_title": chapter_title,
             "chapter_role": chapter_role,
             "chapter_purpose": chapter_purpose,
-            "characters_involved": effective_characters,
-            "key_items": effective_items,
-            "scene_location": effective_scene,
+            "characters_involved": characters_involved,
+            "key_items": key_items,
+            "scene_location": scene_location,
             "foreshadowing": foreshadowing,
             "suspense_level": suspense_level,
             "plot_twist_level": plot_twist_level,

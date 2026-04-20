@@ -55,18 +55,15 @@ class NovelGeneratorGUI:
         self.config_file = "config.json"
         self.loaded_config = load_config(self.config_file)
 
-        # Robust defaults if config fails
-        if not self.loaded_config:
-            self.loaded_config = {
-                "llm_configs": {"Default": {"interface_format": "OpenAI"}},
-                "embedding_configs": {"OpenAI": {"retrieval_k": 4}},
-                "proxy_setting": {"enabled": False, "proxy_url": "127.0.0.1", "proxy_port": "10809"},
-                "other_params": {"genre": "Fantasy", "num_chapters": 10, "word_number": 3000}
-            }
+        if self.loaded_config:
+            last_llm = next(iter(self.loaded_config["llm_configs"].values())).get("interface_format", "OpenAI")
+            last_embedding = self.loaded_config.get("last_embedding_interface_format", "OpenAI")
+        else:
+            last_llm = "OpenAI"
+            last_embedding = "OpenAI"
 
-        llm_configs = self.loaded_config.get("llm_configs", {})
-        if not llm_configs:
-            llm_configs = {"Default": {}}
+        llm_conf = next(iter(self.loaded_config["llm_configs"].values()))
+        choose_configs = self.loaded_config.get("choose_configs", {})
 
         last_llm_key = next(iter(llm_configs))
         llm_conf = llm_configs.get(last_llm_key, {})
@@ -75,18 +72,17 @@ class NovelGeneratorGUI:
         emb_configs = self.loaded_config.get("embedding_configs", {})
         emb_conf = emb_configs.get(last_embedding, {"retrieval_k": 4})
 
-        choose_configs = self.loaded_config.get("choose_configs", {})
-
         # Proxy support
-        proxy_set = self.loaded_config.get("proxy_setting", {"enabled": False})
-        if proxy_set.get("enabled"):
-            p_url = proxy_set.get("proxy_url", "127.0.0.1")
-            p_port = proxy_set.get("proxy_port", "10809")
-            os.environ['HTTP_PROXY'] = f"http://{p_url}:{p_port}"
-            os.environ['HTTPS_PROXY'] = f"http://{p_url}:{p_port}"
+        proxy_url = self.loaded_config["proxy_setting"]["proxy_url"]
+        proxy_port = self.loaded_config["proxy_setting"]["proxy_port"]
+        if self.loaded_config["proxy_setting"]["enabled"]:
+            os.environ['HTTP_PROXY'] = f"http://{proxy_url}:{proxy_port}"
+            os.environ['HTTPS_PROXY'] = f"http://{proxy_url}:{proxy_port}"
         else:
             os.environ.pop('HTTP_PROXY', None)  
             os.environ.pop('HTTPS_PROXY', None)
+
+
 
         # -- General LLM Parameters --
         self.api_key_var = ctk.StringVar(value=llm_conf.get("api_key", ""))
@@ -98,6 +94,7 @@ class NovelGeneratorGUI:
         self.timeout_var = ctk.IntVar(value=llm_conf.get("timeout", 600))
         self.interface_config_var = ctk.StringVar(value=last_llm_key)
 
+
         # -- Embedding Parameters --
         self.embedding_interface_format_var = ctk.StringVar(value=last_embedding)
         self.embedding_api_key_var = ctk.StringVar(value=emb_conf.get("api_key", ""))
@@ -105,31 +102,45 @@ class NovelGeneratorGUI:
         self.embedding_model_name_var = ctk.StringVar(value=emb_conf.get("model_name", "text-embedding-3-small"))
         self.embedding_retrieval_k_var = ctk.StringVar(value=str(emb_conf.get("retrieval_k", 4)))
 
+
         # -- Generation Config --
-        self.architecture_llm_var = ctk.StringVar(value=choose_configs.get("architecture_llm", last_llm_key))
-        self.chapter_outline_llm_var = ctk.StringVar(value=choose_configs.get("chapter_outline_llm", last_llm_key))
-        self.final_chapter_llm_var = ctk.StringVar(value=choose_configs.get("final_chapter_llm", last_llm_key))
-        self.consistency_review_llm_var = ctk.StringVar(value=choose_configs.get("consistency_review_llm", last_llm_key))
-        self.prompt_draft_llm_var = ctk.StringVar(value=choose_configs.get("prompt_draft_llm", last_llm_key))
+        self.architecture_llm_var = ctk.StringVar(value=choose_configs.get("architecture_llm", "DeepSeek"))
+        self.chapter_outline_llm_var = ctk.StringVar(value=choose_configs.get("chapter_outline_llm", "DeepSeek"))
+        self.final_chapter_llm_var = ctk.StringVar(value=choose_configs.get("final_chapter_llm", "DeepSeek"))
+        self.consistency_review_llm_var = ctk.StringVar(value=choose_configs.get("consistency_review_llm", "DeepSeek"))
+        self.prompt_draft_llm_var = ctk.StringVar(value=choose_configs.get("prompt_draft_llm", "DeepSeek"))
+
 
         # -- Novel Parameters --
-        op = self.loaded_config.get("other_params", {})
-        self.topic_default = op.get("topic", "")
-        self.genre_var = ctk.StringVar(value=op.get("genre", "Fantasy"))
-        self.num_chapters_var = ctk.StringVar(value=str(op.get("num_chapters", 10)))
-        self.word_number_var = ctk.StringVar(value=str(op.get("word_number", 3000)))
-        self.filepath_var = ctk.StringVar(value=op.get("filepath", ""))
-        self.chapter_num_var = ctk.StringVar(value=str(op.get("chapter_num", "1")))
-        self.characters_involved_var = ctk.StringVar(value=op.get("characters_involved", ""))
-        self.key_items_var = ctk.StringVar(value=op.get("key_items", ""))
-        self.scene_location_var = ctk.StringVar(value=op.get("scene_location", ""))
-        self.time_constraint_var = ctk.StringVar(value=op.get("time_constraint", ""))
-        self.user_guidance_default = op.get("user_guidance", "")
+        if self.loaded_config and "other_params" in self.loaded_config:
+            op = self.loaded_config["other_params"]
+            self.topic_default = op.get("topic", "")
+            self.genre_var = ctk.StringVar(value=op.get("genre", "Fantasy"))
+            self.num_chapters_var = ctk.StringVar(value=str(op.get("num_chapters", 10)))
+            self.word_number_var = ctk.StringVar(value=str(op.get("word_number", 3000)))
+            self.filepath_var = ctk.StringVar(value=op.get("filepath", ""))
+            self.chapter_num_var = ctk.StringVar(value=str(op.get("chapter_num", "1")))
+            self.characters_involved_var = ctk.StringVar(value=op.get("characters_involved", ""))
+            self.key_items_var = ctk.StringVar(value=op.get("key_items", ""))
+            self.scene_location_var = ctk.StringVar(value=op.get("scene_location", ""))
+            self.time_constraint_var = ctk.StringVar(value=op.get("time_constraint", ""))
+            self.user_guidance_default = op.get("user_guidance", "")
+            self.webdav_url_var = ctk.StringVar(value=op.get("webdav_url", ""))
+            self.webdav_username_var = ctk.StringVar(value=op.get("webdav_username", ""))
+            self.webdav_password_var = ctk.StringVar(value=op.get("webdav_password", ""))
 
-        webdav = self.loaded_config.get("webdav_config", {})
-        self.webdav_url_var = ctk.StringVar(value=webdav.get("webdav_url", ""))
-        self.webdav_username_var = ctk.StringVar(value=webdav.get("webdav_username", ""))
-        self.webdav_password_var = ctk.StringVar(value=webdav.get("webdav_password", ""))
+        else:
+            self.topic_default = ""
+            self.genre_var = ctk.StringVar(value="Fantasy")
+            self.num_chapters_var = ctk.StringVar(value="10")
+            self.word_number_var = ctk.StringVar(value="3000")
+            self.filepath_var = ctk.StringVar(value="")
+            self.chapter_num_var = ctk.StringVar(value="1")
+            self.characters_involved_var = ctk.StringVar(value="")
+            self.key_items_var = ctk.StringVar(value="")
+            self.scene_location_var = ctk.StringVar(value="")
+            self.time_constraint_var = ctk.StringVar(value="")
+            self.user_guidance_default = ""
 
         # --------------- Tab Layout ---------------
         self.tabview = ctk.CTkTabview(self.master)

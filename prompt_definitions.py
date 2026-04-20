@@ -4,26 +4,21 @@ import os
 import json
 
 def load_prompts():
-    """Loads prompts from the English JSON file. Provides basic fallbacks to prevent global variable errors."""
+    """Loads prompts from the English JSON file."""
     base_dir = os.path.dirname(os.path.abspath(__file__))
     prompt_file = os.path.join(base_dir, 'prompts', 'en_US.json')
 
-    loaded = {}
-    if os.path.exists(prompt_file):
-        try:
-            with open(prompt_file, 'r', encoding='utf-8') as f:
-                loaded = json.load(f)
-        except Exception as e:
-            print(f"Error loading prompts: {e}")
-    else:
-        print(f"Prompt file missing: {prompt_file}")
-
-    return loaded
+    try:
+        with open(prompt_file, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"Error loading prompts: {e}")
+        return {}
 
 # Load English prompts
 _prompts = load_prompts()
 
-# Map dictionary keys to global variables with empty string defaults
+# Map dictionary keys to global variables for compatibility with existing code
 summarize_recent_chapters_prompt = _prompts.get('summarize_recent_chapters_prompt', '')
 knowledge_search_prompt = _prompts.get('knowledge_search_prompt', '')
 knowledge_filter_prompt = _prompts.get('knowledge_filter_prompt', '')

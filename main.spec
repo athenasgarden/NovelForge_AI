@@ -25,18 +25,8 @@ hiddenimports = ['typing_extensions',
 tmp_ret = collect_all('chromadb')
 datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
 
-# Portably find customtkinter directory
-try:
-    customtkinter_dir = os.path.dirname(customtkinter.__file__)
-    datas.append((customtkinter_dir, 'customtkinter'))
-except Exception:
-    pass
-
-# Include prompts and icon
-if os.path.exists('prompts'):
-    datas.append(('prompts', 'prompts'))
-if os.path.exists('icon.ico'):
-    datas.append(('icon.ico', '.'))
+customtkinter_dir = r'c:/Users/xieli/Desktop/NovelForge_AI/.venv/Lib/site-packages/customtkinter'
+datas.append((customtkinter_dir, 'customtkinter'))
 
 a = Analysis(
     ['main.py'],
@@ -59,8 +49,8 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='NovelForge',
-    debug=False,
+    name='NovelForge_AI_V1.4.4',
+    debug=True,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
@@ -80,5 +70,5 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='NovelForge'
+    name='NovelForge_AI_V1.4.4'
 )
