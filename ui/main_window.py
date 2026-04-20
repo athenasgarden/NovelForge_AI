@@ -65,16 +65,12 @@ class NovelGeneratorGUI:
         llm_conf = next(iter(self.loaded_config["llm_configs"].values()))
         choose_configs = self.loaded_config.get("choose_configs", {})
 
+        last_llm_key = next(iter(llm_configs))
+        llm_conf = llm_configs.get(last_llm_key, {})
 
-        if self.loaded_config and "embedding_configs" in self.loaded_config and last_embedding in self.loaded_config["embedding_configs"]:
-            emb_conf = self.loaded_config["embedding_configs"][last_embedding]
-        else:
-            emb_conf = {
-                "api_key": "",
-                "base_url": "https://api.openai.com/v1",
-                "model_name": "text-embedding-ada-002",
-                "retrieval_k": 4
-            }
+        last_embedding = self.loaded_config.get("last_embedding_interface_format", "OpenAI")
+        emb_configs = self.loaded_config.get("embedding_configs", {})
+        emb_conf = emb_configs.get(last_embedding, {"retrieval_k": 4})
 
         # Proxy support
         proxy_url = self.loaded_config["proxy_setting"]["proxy_url"]
@@ -96,15 +92,14 @@ class NovelGeneratorGUI:
         self.temperature_var = ctk.DoubleVar(value=llm_conf.get("temperature", 0.7))
         self.max_tokens_var = ctk.IntVar(value=llm_conf.get("max_tokens", 8192))
         self.timeout_var = ctk.IntVar(value=llm_conf.get("timeout", 600))
-        self.interface_config_var = ctk.StringVar(value=next(iter(self.loaded_config["llm_configs"])))
-
+        self.interface_config_var = ctk.StringVar(value=last_llm_key)
 
 
         # -- Embedding Parameters --
         self.embedding_interface_format_var = ctk.StringVar(value=last_embedding)
         self.embedding_api_key_var = ctk.StringVar(value=emb_conf.get("api_key", ""))
         self.embedding_url_var = ctk.StringVar(value=emb_conf.get("base_url", "https://api.openai.com/v1"))
-        self.embedding_model_name_var = ctk.StringVar(value=emb_conf.get("model_name", "text-embedding-ada-002"))
+        self.embedding_model_name_var = ctk.StringVar(value=emb_conf.get("model_name", "text-embedding-3-small"))
         self.embedding_retrieval_k_var = ctk.StringVar(value=str(emb_conf.get("retrieval_k", 4)))
 
 

@@ -11,90 +11,91 @@ def load_config(config_file: str) -> dict:
     """Load configuration from the specified config_file. Create a default one if it doesn't exist."""
 
     if not os.path.exists(config_file):
-        create_config(config_file)
+        return create_config(config_file)
 
     try:
         with open(config_file, 'r', encoding='utf-8') as f:
             return json.load(f)
-    except:
-            return {}
+    except Exception:
+        return {}
 
 
 def create_config(config_file: str) -> dict:
     """Create a default configuration file."""
     config = {
-    "last_interface_format": "OpenAI",
-    "last_embedding_interface_format": "OpenAI",
-    "llm_configs": {
-        "DeepSeek V3": {
-            "api_key": "",
-            "base_url": "https://api.deepseek.com/v1",
-            "model_name": "deepseek-chat",
-            "temperature": 0.7,
-            "max_tokens": 8192,
-            "timeout": 600,
-            "interface_format": "OpenAI"
+        "last_interface_format": "OpenAI",
+        "last_embedding_interface_format": "OpenAI",
+        "llm_configs": {
+            "DeepSeek": {
+                "api_key": "",
+                "base_url": "https://api.deepseek.com/v1",
+                "model_name": "deepseek-chat",
+                "temperature": 0.7,
+                "max_tokens": 8192,
+                "timeout": 600,
+                "interface_format": "DeepSeek"
+            },
+            "GPT-4o": {
+                "api_key": "",
+                "base_url": "https://api.openai.com/v1",
+                "model_name": "gpt-4o",
+                "temperature": 0.7,
+                "max_tokens": 16384,
+                "timeout": 600,
+                "interface_format": "OpenAI"
+            },
+            "Ollama Local": {
+                "api_key": "ollama",
+                "base_url": "http://localhost:11434/v1",
+                "model_name": "llama3",
+                "temperature": 0.7,
+                "max_tokens": 4096,
+                "timeout": 600,
+                "interface_format": "Ollama"
+            }
         },
-        "GPT 5": {
-            "api_key": "",
-            "base_url": "https://api.openai.com/v1",
-            "model_name": "gpt-5",
-            "temperature": 0.7,
-            "max_tokens": 32768,
-            "timeout": 600,
-            "interface_format": "OpenAI"
+        "embedding_configs": {
+            "OpenAI": {
+                "api_key": "",
+                "base_url": "https://api.openai.com/v1",
+                "model_name": "text-embedding-3-small",
+                "retrieval_k": 4,
+                "interface_format": "OpenAI"
+            }
         },
-        "Gemini 2.5 Pro": {
-            "api_key": "",
-            "base_url": "https://generativelanguage.googleapis.com/v1beta/openai",
-            "model_name": "gemini-2.5-pro",
-            "temperature": 0.7,
-            "max_tokens": 32768,
-            "timeout": 600,
-            "interface_format": "OpenAI"
+        "other_params": {
+            "topic": "",
+            "genre": "Fantasy",
+            "num_chapters": 10,
+            "word_number": 3000,
+            "filepath": "",
+            "chapter_num": "1",
+            "user_guidance": "",
+            "characters_involved": "",
+            "key_items": "",
+            "scene_location": "",
+            "time_constraint": ""
+        },
+        "choose_configs": {
+            "prompt_draft_llm": "DeepSeek",
+            "chapter_outline_llm": "DeepSeek",
+            "architecture_llm": "GPT-4o",
+            "final_chapter_llm": "GPT-4o",
+            "consistency_review_llm": "DeepSeek"
+        },
+        "proxy_setting": {
+            "proxy_url": "127.0.0.1",
+            "proxy_port": "",
+            "enabled": False
+        },
+        "webdav_config": {
+            "webdav_url": "",
+            "webdav_username": "",
+            "webdav_password": ""
         }
-    },
-    "embedding_configs": {
-        "OpenAI": {
-            "api_key": "",
-            "base_url": "https://api.openai.com/v1",
-            "model_name": "text-embedding-ada-002",
-            "retrieval_k": 4,
-            "interface_format": "OpenAI"
-        }
-    },
-    "other_params": {
-        "topic": "",
-        "genre": "",
-        "num_chapters": 0,
-        "word_number": 0,
-        "filepath": "",
-        "chapter_num": "120",
-        "user_guidance": "",
-        "characters_involved": "",
-        "key_items": "",
-        "scene_location": "",
-        "time_constraint": ""
-    },
-    "choose_configs": {
-        "prompt_draft_llm": "DeepSeek V3",
-        "chapter_outline_llm": "DeepSeek V3",
-        "architecture_llm": "Gemini 2.5 Pro",
-        "final_chapter_llm": "GPT 5",
-        "consistency_review_llm": "DeepSeek V3"
-    },
-    "proxy_setting": {
-        "proxy_url": "127.0.0.1",
-        "proxy_port": "",
-        "enabled": False
-    },
-    "webdav_config": {
-        "webdav_url": "",
-        "webdav_username": "",
-        "webdav_password": ""
     }
-}
     save_config(config, config_file)
+    return config
 
 
 
