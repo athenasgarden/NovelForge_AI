@@ -1,5 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 from PyInstaller.utils.hooks import collect_all
+import os
+import customtkinter
 
 datas = []
 binaries = []
@@ -23,8 +25,18 @@ hiddenimports = ['typing_extensions',
 tmp_ret = collect_all('chromadb')
 datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
 
-customtkinter_dir = r'c:/Users/xieli/Desktop/AI_NovelGenerator/.venv/Lib/site-packages/customtkinter'
-datas.append((customtkinter_dir, 'customtkinter'))
+# Portably find customtkinter directory
+try:
+    customtkinter_dir = os.path.dirname(customtkinter.__file__)
+    datas.append((customtkinter_dir, 'customtkinter'))
+except Exception:
+    pass
+
+# Include prompts and icon
+if os.path.exists('prompts'):
+    datas.append(('prompts', 'prompts'))
+if os.path.exists('icon.ico'):
+    datas.append(('icon.ico', '.'))
 
 a = Analysis(
     ['main.py'],
@@ -47,8 +59,8 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='AI_NovelGenerator_V1.4.4',
-    debug=True,
+    name='NovelForge',
+    debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
@@ -68,5 +80,5 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='AI_NovelGenerator_V1.4.4'
+    name='NovelForge'
 )
